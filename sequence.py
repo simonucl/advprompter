@@ -150,7 +150,7 @@ class MergedSeq:
             [seq.get_embed(embedding_matrix) for seq in self._seqs],
             dim=0,
         )
-        embeds = torch.cat(embeds_list, dim=1)
+        embeds = torch.cat(embeds_list, dim=1) # shape: (batch_size, seq_len, embed_dim)
         return embeds
 
     def get_entropy(self, average=True):

@@ -46,7 +46,7 @@ class LLM(nn.Module):
     def save_pretrained(self, save_path):
         self.model.save_pretrained(save_path, save_embedding_layers=True)
 
-    def model_forward(self, query_seq, use_basemodel=False):
+    def model_forward(self, query_seq: MergedSeq, use_basemodel=False):
         # reorder such that all masked tokens are on the left
         mask = query_seq.mask
         sorted_mask, indices = torch.sort(mask.long(), dim=1, stable=True)
@@ -59,19 +59,21 @@ class LLM(nn.Module):
                     input_ids=sorted_ids, attention_mask=sorted_mask
                 ).logits
             else:
-                embeds = query_seq.get_embed(self.embedding_matrix)
-                indices_extended = indices[:, :, None].repeat(1, 1, embeds.shape[-1])
-                sorted_embeds = embeds.gather(1, indices_extended)
+                embeds = query_seq.get_embed(self.embedding_matrix) # shape: (batch_size, seq_len, embed_dim)
+                indices_extended = indices[:, :, None].repeat(1, 1, embeds.shape[-1]) # shape: (batch_size, seq_len, embed_dim
+                sorted_embeds = embeds.gather(1, indices_extended) # shape: (batch_size, seq_len, embed_dim)
                 shifted_sorted_pred_logits = self.model(
                     inputs_embeds=sorted_embeds, attention_mask=sorted_mask
                 ).logits
 
         # reverse the sort to get the original order (also account for the shift)
-        dummy_pred_logits = torch.zeros_like(shifted_sorted_pred_logits[:, :1, :])
+        dummy_pred_logits = torch.zeros_like(shifted_sorted_pred_logits[:, :1, :]) # shape: (batch_size, 1, vocab_size)
         sorted_pred_logits = torch.cat(
             [dummy_pred_logits, shifted_sorted_pred_logits[:, :-1, :]], dim=1
         )
         reverse_indices = indices.argsort(dim=1)
+        del dummy_pred_logits, shifted_sorted_pred_logits, indices
+
         reverse_indices_extended = reverse_indices[:, :, None].repeat(
             1, 1, sorted_pred_logits.shape[-1]
         )
@@ -80,7 +82,8 @@ class LLM(nn.Module):
             [shifted_pred_logits[:, 1:, :], shifted_sorted_pred_logits[:, -1:, :]],
             dim=1,
         )
-
+        del sorted_pred_logits, shifted_pred_logits, shifted_sorted_pred_logits
+        
         if self.disallowed_ids is not None:
             pred_logits[:, :, self.disallowed_ids] = -1e10
         if torch.isnan(pred_logits).any() or torch.isinf(pred_logits).any():

@@ -408,6 +408,9 @@ class Seq:
     @property
     def onehot(self):
         ids = self.ids
+        vocab_size = self.tokenizer.vocab_size
+        if vocab_size == 128000: # Special case for llama-3
+            vocab_size = 128256
         one_hot_mask = torch.zeros(
             (ids.shape[0], ids.shape[1], self.tokenizer.vocab_size), device=ids.device
         )

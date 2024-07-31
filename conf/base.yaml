@@ -1,6 +1,6 @@
 defaults:
   - prompter: llama2  # one of: llama2, tiny_llama (see corresponding .yaml in conf/prompter/)
-  - target_llm: vicuna_chat  # one of: llama2_chat, vicuna_chat, mistral_chat, pythia_chat, falcon_chat, gemma_chat, tiny_llama_chat (see corresponding .yaml in conf/target_llm/)
+  - target_llm: aya  # one of: llama2_chat, vicuna_chat, mistral_chat, pythia_chat, falcon_chat, gemma_chat, tiny_llama_chat (see corresponding .yaml in conf/target_llm/)
   - _self_
   
 verbose: false
@@ -14,12 +14,12 @@ data:
   affirmative_prefixes_pth: "${data.data_dir}/affirmative_prefixes.csv"
 
 wandb_params:
-  entity: "YOUR_WANDB_ENTITY"
-  project: "YOUR_WANDB_PROJECT"
+  entity: "simon011130"
+  project: "advprompter"
   log_sequences_every: 
     train: 1000
     eval: 1000
-  enable_wandb: false
+  enable_wandb: true
 
 hydra:
   run:

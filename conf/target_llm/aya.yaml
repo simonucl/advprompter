@@ -1,0 +1,17 @@
+defaults:
+  - base_target_llm
+  - _self_
+
+llm_params:
+  model_name: "aya-8b"
+  checkpoint: 'CohereForAI/aya-23-8B' # or replace with local DIR
+prompt_manager:
+  prompt_template:
+    - key: system_message
+      msg: "<BOS_TOKEN><|START_OF_TURN_TOKEN|><|USER_TOKEN|>"
+    - key: full_instruct
+      msg: "{full_instruct}"  # loaded from context
+    - key: separator
+      msg: "<|END_OF_TURN_TOKEN|><|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>"
+    - key: target
+      msg: "{target}"  # loaded from context

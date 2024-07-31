@@ -412,7 +412,7 @@ class Seq:
         if vocab_size == 128000: # Special case for llama-3
             vocab_size = 128256
         one_hot_mask = torch.zeros(
-            (ids.shape[0], ids.shape[1], self.tokenizer.vocab_size), device=ids.device
+            (ids.shape[0], ids.shape[1], vocab_size), device=ids.device
         )
         one_hot_mask.scatter_(2, ids[:, :, None], 1)
         return one_hot_mask

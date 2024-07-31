@@ -72,7 +72,7 @@ class LLM(nn.Module):
             [dummy_pred_logits, shifted_sorted_pred_logits[:, :-1, :]], dim=1
         )
         reverse_indices = indices.argsort(dim=1)
-        del dummy_pred_logits, indices
+        # del dummy_pred_logits, indices
 
         reverse_indices_extended = reverse_indices[:, :, None].repeat(
             1, 1, sorted_pred_logits.shape[-1]
@@ -82,7 +82,7 @@ class LLM(nn.Module):
             [shifted_pred_logits[:, 1:, :], shifted_sorted_pred_logits[:, -1:, :]],
             dim=1,
         )
-        del sorted_pred_logits, shifted_pred_logits, shifted_sorted_pred_logits
+        # del sorted_pred_logits, shifted_pred_logits, shifted_sorted_pred_logits
 
         if self.disallowed_ids is not None:
             pred_logits[:, :, self.disallowed_ids] = -1e10

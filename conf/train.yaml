@@ -37,8 +37,8 @@ train:
     num_beams: 4
     repetition_penalty: 1.2
     top_k: 48 # try to reduce this or increase num_chunks if doesn't fit to memory
-    num_chunks: 1  # process top_k iteratively in chunks, helps reduce memory, should divide top_k
-    lambda_val: 100  # w2 in AutoDAN paper, controls perplexity vs loss tradeoff (50-100 is good)
+    num_chunks: 12  # process top_k iteratively in chunks, helps reduce memory, should divide top_k
+    lambda_val: 150  # w2 in AutoDAN paper, controls perplexity vs loss tradeoff (50-100 is good)
     candidates:
       do_sample: true
       temperature: 0.6

@@ -24,6 +24,7 @@ from transformers import (
     GPTNeoXForCausalLM,
     LlamaForCausalLM,
     MistralForCausalLM,
+    CohereForCausalLM
 )
 
 
@@ -457,7 +458,7 @@ def llm_loader(llm_params, verbose=False):
             llm_params.checkpoint,
             model_max_length=1024,
             padding_side="right",
-            use_fast=use_fast,
+            # use_fast=use_fast,
             legacy=False,
         )
         model = AutoModelForCausalLM.from_pretrained(
@@ -511,6 +512,7 @@ def get_embedding_matrix(model):
         isinstance(model, LlamaForCausalLM)
         or isinstance(model, MistralForCausalLM)
         or isinstance(model, GemmaForCausalLM)
+        or isinstance(model, CohereForCausalLM)
     ):
         return model.model.embed_tokens.weight
     elif isinstance(model, GPTNeoXForCausalLM):

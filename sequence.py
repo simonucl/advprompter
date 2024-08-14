@@ -411,6 +411,8 @@ class Seq:
         vocab_size = self.tokenizer.vocab_size
         if vocab_size == 128000: # Special case for llama-3
             vocab_size = 128256
+        elif vocab_size == 255000: # Special case for Aya
+            vocab_size = 256000
         one_hot_mask = torch.zeros(
             (ids.shape[0], ids.shape[1], vocab_size), device=ids.device
         )

@@ -47,6 +47,3 @@ train:
       do_sample: true
       temperature: 0.6
       always_include_best: true
-
-wandb_params:
-  run_name: prompter-${prompter}-target-${target_llm}

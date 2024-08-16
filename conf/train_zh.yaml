@@ -5,5 +5,3 @@ defaults:
 
 data:
   data_dir: "./data/zh"
-wandb_params:
-  run_name: prompter-${prompter}-target-${target_llm}-lang-hi

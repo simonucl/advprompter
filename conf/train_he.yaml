@@ -4,4 +4,4 @@ defaults:
   - train
 
 data:
-  data_dir: "./data/hi"
+  data_dir: "./data/he"

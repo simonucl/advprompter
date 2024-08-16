@@ -72,9 +72,13 @@ class Workspace:
         config = omegaconf.OmegaConf.to_container(
             self.cfg, resolve=True, throw_on_missing=True
         )
+        name = None
+        if self.cfg.wandb_params.run_name != "None":
+            name = self.cfg.wandb_params.run_name
         wandb.init(
             entity=self.cfg.wandb_params.entity,
             project=self.cfg.wandb_params.project,
+            name=name,
             config=config,
             id=wandb_id,
             resume="allow",

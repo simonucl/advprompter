@@ -6,4 +6,4 @@ defaults:
 data:
   data_dir: "./data/hi"
 wandb_params:
-  run_name: $prompter-{prompter}-target-{target_llm}-lang-hi
+  run_name: prompter-${prompter}-target-${target_llm}-lang-hi

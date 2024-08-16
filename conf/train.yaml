@@ -49,4 +49,4 @@ train:
       always_include_best: true
 
 wandb_params:
-  run_name: $prompter-{prompter}-target-{target_llm}
+  run_name: prompter-${prompter}-target-${target_llm}

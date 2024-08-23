@@ -31,7 +31,7 @@ def check_jailbroken(seq, test_prefixes):
 def eval_suffix_datasets(agent, suffix_dataset_pth_dct, test_prefixes, output_dir):
     for suffix_dataset_key, suffix_dataset_pth in suffix_dataset_pth_dct.items():
         eval_suffix_dataset(
-            model=agent,
+            agent=agent,
             suffix_dataset_key=suffix_dataset_key,
             suffix_dataset_pth=suffix_dataset_pth,
             test_prefixes=test_prefixes,
@@ -136,7 +136,8 @@ if __name__ == "__main__":
         agent = VllmAgent(model_name=args.model, model_kwargs=model_kwargs, generation_kwargs=generation_kwargs)
 
     # Load the test prefixes
-    test_prefixes = read_csv_file(args.test_prefixes, column_names=["prefix"])["prefix"].tolist()
+    # test_prefixes = read_csv_file(args.test_prefixes, column_names=["prefix"])["prefix"].tolist()
+    test_prefixes = read_csv_file(args.test_prefixes)
 
     # Evaluate the test prefixes
     eval_suffix_datasets(agent, suffix_dataset_pth_dct, test_prefixes, args.output_dir)

@@ -18,6 +18,7 @@ import pandas as pd
 import numpy as np
 from agent import VllmAgent, GptAgent, CohereAgent
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 
 def check_jailbroken(seq, test_prefixes):
     jailbroken_list = [
@@ -26,9 +27,16 @@ def check_jailbroken(seq, test_prefixes):
     jailbroken_avg = list_avg(jailbroken_list)
     return jailbroken_avg, jailbroken_list
 
+def _openai_completion_helper(api_key,
+                              model_name,
+                              instruct
+                              ):
+    agent = GptAgent(api_key=api_key, model_name=model_name)
+    completion = agent.generate(instruct)
+    return completion
 
 @torch.no_grad()
-def eval_suffix_datasets(agent, suffix_dataset_pth_dct, test_prefixes, output_dir):
+def eval_suffix_datasets(agent, suffix_dataset_pth_dct, test_prefixes, output_dir, parallel=1):
     for suffix_dataset_key, suffix_dataset_pth in suffix_dataset_pth_dct.items():
         eval_suffix_dataset(
             agent=agent,
@@ -36,10 +44,11 @@ def eval_suffix_datasets(agent, suffix_dataset_pth_dct, test_prefixes, output_di
             suffix_dataset_pth=suffix_dataset_pth,
             test_prefixes=test_prefixes,
             output_dir=output_dir,
+            parallel=parallel,
         )
 
 @torch.no_grad()
-def eval_suffix_dataset(agent, suffix_dataset_key, suffix_dataset_pth, test_prefixes, output_dir):
+def eval_suffix_dataset(agent, suffix_dataset_key, suffix_dataset_pth, test_prefixes, output_dir, parallel=1):
     # split = suffix_dataset_key
     logs = {}
     split = re.sub("[^a-zA-Z]", "", suffix_dataset_key)
@@ -64,7 +73,10 @@ def eval_suffix_dataset(agent, suffix_dataset_key, suffix_dataset_pth, test_pref
     if isinstance(agent, VllmAgent):
         completions = agent.generate(full_instructs)
     else:
-        completions = [agent.generate(instruct) for instruct in tqdm(full_instructs, total=len(full_instructs))]
+        if parallel > 1:
+            with ThreadPoolExecutor(max_workers=parallel) as executor:
+                completions = list(tqdm(executor.map(lambda x: _openai_completion_helper(agent.api_key, agent.model_name, x), full_instructs), total=len(full_instructs)))
+        # completions = [agent.generate(instruct) for instruct in tqdm(full_instructs, total=len(full_instructs))]
         
         # --------- check jb for each trial
     jailbroken_avg, jailbroken_list = check_jailbroken(
@@ -129,6 +141,7 @@ if __name__ == "__main__":
     argparser.add_argument('--top_k', type=int, default=50)
     argparser.add_argument('--max_new_tokens', type=int, default=1024)
     argparser.add_argument('--seed', type=int, default=42)
+    argparser.add_argument('--parallel', type=int, default=1)
 
     args = argparser.parse_args()
 
@@ -158,4 +171,4 @@ if __name__ == "__main__":
     test_prefixes = read_csv_file(args.test_prefixes)
 
     # Evaluate the test prefixes
-    eval_suffix_datasets(agent, suffix_dataset_pth_dct, test_prefixes, args.output_dir)
+    eval_suffix_datasets(agent, suffix_dataset_pth_dct, test_prefixes, args.output_dir, args.parallel)

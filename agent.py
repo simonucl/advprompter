@@ -89,7 +89,7 @@ class GptAgent:
         print('Querying GPT-3.5-turbo...')
 
         chat_completion = self.client.chat.completions.create(
-            messages=prompt['messages'],
+            messages=prompt,
             model=self.model_name,
             temperature=0,
             max_tokens=4096,

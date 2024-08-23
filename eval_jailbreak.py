@@ -135,7 +135,7 @@ if __name__ == "__main__":
     if "gpt" in args.model.lower():
         agent = GptAgent(api_key=os.environ["OPENAI_API_KEY"], model_name=args.model)
     elif "command" in args.model.lower():
-        agent = CohereAgent(api_key=os.environ["COHERE_API_KEY"], model_name=args.model)
+        agent = CohereAgent(api_key=os.environ["COHERE_API_KEY"])
     else:
         model_kwargs = dict(data_parallel_size=1)
         generation_kwargs = {

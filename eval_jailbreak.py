@@ -161,7 +161,7 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     suffix_dataset_pth_dct = {
-        # 'train': os.path.join(args.data_dir, 'train.csv'),
+        'train': os.path.join(args.data_dir, 'train.csv'),
         'validation': os.path.join(args.data_dir, 'validation.csv'),
         'test': os.path.join(args.data_dir, 'test.csv'),
     }

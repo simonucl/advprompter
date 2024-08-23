@@ -16,6 +16,14 @@ llm_params:
         - q_proj
         - v_proj
         - lm_head
+  device: 'cuda:0'
+  freeze: true
+  dtype: float32
+allow_non_ascii: false
+gen_params:
+  do_sample: true
+  temperature: 1.0
+  top_p: 0.9
 prompt_manager:
   prompt_template: 
     - key: system_message

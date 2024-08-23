@@ -36,9 +36,10 @@ def _openai_completion_helper(api_key,
     return completion
 
 def _cohere_completion_helper(api_key,
+                              model_name,
                               instruct
                               ):
-    agent = CohereAgent(api_key=api_key)
+    agent = CohereAgent(api_key=api_key, model_name=model_name)
     completion = agent.generate(instruct)
     return completion
 
@@ -87,7 +88,7 @@ def eval_suffix_dataset(agent, suffix_dataset_key, suffix_dataset_pth, test_pref
     elif isinstance(agent, CohereAgent):
         if parallel > 1:
             with ThreadPoolExecutor(max_workers=parallel) as executor:
-                completions = list(tqdm(executor.map(lambda x: _cohere_completion_helper(os.environ["COHERE_API_KEY"], x), full_instructs), total=len(full_instructs)))
+                completions = list(tqdm(executor.map(lambda x: _cohere_completion_helper(os.environ["COHERE_API_KEY"], agent.model_name, x), full_instructs), total=len(full_instructs)))
     else:
         raise ValueError(f"Unknown agent type: {type(agent)}")
     
@@ -168,7 +169,7 @@ if __name__ == "__main__":
     if "gpt" in args.model.lower():
         agent = GptAgent(api_key=os.environ["OPENAI_API_KEY"], model_name=args.model)
     elif "command" in args.model.lower():
-        agent = CohereAgent(api_key=os.environ["COHERE_API_KEY"])
+        agent = CohereAgent(api_key=os.environ["COHERE_API_KEY"], model_name=args.model)
     else:
         model_kwargs = dict(data_parallel_size=1)
         generation_kwargs = {

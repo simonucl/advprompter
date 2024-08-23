@@ -23,7 +23,6 @@ from omegaconf import DictConfig, OmegaConf
 from sequence import MergedSeq, Seq, collate_fn
 import numpy as np
 import argparse
-# from omegaconf import DictConfig, OmegaConf
 
 def batch_to_context(prompter, batch):
     model_map = dict(
@@ -150,131 +149,20 @@ def save_suffix_dataset(suffix_dataset, dir):
         csvwriter.writerows(suffix_dataset.data)
     return suffix_dataset_pth
 
-# @torch.no_grad()
-# def eval_suffix_datasets(suffix_dataset_pth_dct):
-#     for suffix_dataset_key, suffix_dataset_pth in suffix_dataset_pth_dct.items():
-#         eval_suffix_dataset(
-#             suffix_dataset_key=suffix_dataset_key,
-#             suffix_dataset_pth=suffix_dataset_pth,
-#         )
-
-# @torch.no_grad()
-# def eval_suffix_dataset(suffix_dataset_key, suffix_dataset_pth):
-#     self.prompter.eval()
-#     self.target_llm.eval()
-
-#     # split = suffix_dataset_key
-#     split = re.sub("[^a-zA-Z]", "", suffix_dataset_key)
-
-#     eval_loader = get_dataloader(
-#         suffix_dataset_pth,
-#         shuffle=False,
-#         augment_target=False,
-#         batch_size=self.cfg.eval.batch_size,
-#     )
-#     eval_metrics = Metrics(prefix=split + "_eval/")
-
-#     instruct_jb_dict = defaultdict(list)
-#     processed_samples, ppl_sum = 0, 0
-#     pbar = tqdm(eval_loader)
-#     pbar.set_description(
-#         f"Evaluating suffix dataset {suffix_dataset_key} | Jailbroken 0/0 | Success 0/0"
-#     )
-#     for batch_idx, batch in enumerate(pbar):
-#         context = self.batch_to_context(batch)
-#         instruct = context.instruct
-#         suffix = context.suffix
-#         full_instruct = context.full_instruct
-#         target = context.target
-#         target_llm_tf, target_llm_ar, basemodel_tf = evaluate_prompt(
-#             cfg=self.cfg,
-#             instruct=instruct,
-#             suffix=suffix,
-#             full_instruct=full_instruct,
-#             target=target,
-#             prompter=self.prompter,
-#             target_llm=self.target_llm,
-#             generate_target_llm_response=True,
-#         )
-
-#         # --------- check jb for each trial
-#         _, jailbroken_list = check_jailbroken(
-#             seq=target_llm_ar.response_sample, test_prefixes=self.test_prefixes
-#         )
-#         instruct = instruct
-#         assert instruct.bs == len(jailbroken_list)
-#         instruct_text = instruct.text
-#         for i in range(instruct.bs):
-#             instruct_jb_dict[instruct_text[i]].append(jailbroken_list[i])
-#         # -----------
-
-#         log_data(
-#             log_table=None,
-#             metrics=eval_metrics,
-#             step=self.step,
-#             split=split,
-#             batch_idx=batch_idx,
-#             test_prefixes=self.test_prefixes,
-#             affirmative_prefixes=self.affirmative_prefixes,
-#             batch_size=self.cfg.eval.batch_size,
-#             log_sequences_to_wandb=False,
-#             log_metrics_to_wandb=False,
-#             target_llm_tf=target_llm_tf,
-#             target_llm_ar=target_llm_ar,
-#             basemodel_tf=basemodel_tf,
-#         )
-#         processed_samples += instruct.bs
-#         if basemodel_tf is not None:
-#             ppl_sum += basemodel_tf.perplexity.sum().item()
-
-#         total_jailbroken = sum(
-#             eval_metrics.metrics[split + "_eval/target_llm/ar/jailbroken_sum"]
-#         )
-#         pbar.set_description(
-#             f"Evaluating {suffix_dataset_key} | Jailbroken {total_jailbroken}/{processed_samples}"
-#         )
-
-#     avg_metrics = eval_metrics.get_avg(step=self.step, log_to_wandb=False)
-#     avg_metrics["avg/" + split + "_eval/target_llm/ar/jailbroken_sum"] = (
-#         float(
-#             sum(eval_metrics.metrics[split + "_eval/target_llm/ar/jailbroken_sum"])
-#         )
-#         / processed_samples
-#     )
-
-#     tqdm.write(
-#         f" Loss: {avg_metrics['avg/' + split + '_eval/target_llm/tf/loss']:.2f}"
-#     )
-#     tqdm.write(
-#         f" Jailbroken: {avg_metrics['avg/' + split + '_eval/target_llm/ar/jailbroken_sum']:.2f}"
-#     )
-#     tqdm.write(f" PPL: {float(ppl_sum) / processed_samples:.2f}")
-#     jb_all = [jb_list for (instruct, jb_list) in instruct_jb_dict.items()]
-#     max_length = max(len(sublist) for sublist in jb_all)
-#     padded_list = [
-#         np.pad(sublist, (0, max_length - len(sublist)), "constant")
-#         for sublist in jb_all
-#     ]
-#     jb_stat_np = np.array(padded_list)
-#     for ti in range(1, jb_stat_np.shape[1] + 1):
-#         tqdm.write(
-#             f"{suffix_dataset_key} | hit rate @ {ti}: {hit_rate_at_n(jb_stat_np, ti)}"
-#         )
-
 if '__main__' == __name__:
     parser = argparse.ArgumentParser()
     parser.add_argument("--num_trials", type=int, default=5)
     parser.add_argument("--batch_size", type=int, default=8)
     parser.add_argument("--model_param_path", type=str, default="gpt2")
-    parser.add_argument("--data_idr", type=str, default="data")
+    parser.add_argument("--data_dir", type=str, default="data")
     parser.add_argument("--output_dir", type=str, default="output")
     args = parser.parse_args()
 
     max_new_tokens_list = [30, 50]
     dataset_pth_dct = {
-        'train': os.path.join(args.data_idr, 'harmful_behaviors', 'dataset', 'train.csv'),
-        'validation': os.path.join(args.data_idr, 'harmful_behaviors', 'dataset', 'validation.csv'),
-        'test': os.path.join(args.data_idr, 'harmful_behaviors', 'dataset', 'test.csv'),
+        'train': os.path.join(args.data_dir, 'harmful_behaviors', 'dataset', 'train.csv'),
+        'validation': os.path.join(args.data_dir, 'harmful_behaviors', 'dataset', 'validation.csv'),
+        'test': os.path.join(args.data_dir, 'harmful_behaviors', 'dataset', 'test.csv'),
     }
     suffix_dataset_dir = os.path.join(args.output_dir, 'suffix_dataset')
 

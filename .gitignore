@@ -1,4 +1,5 @@
 data/eval/*.csv
+data/*
 misc/*
 outputs/*
 .idea/

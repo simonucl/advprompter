@@ -106,12 +106,12 @@ class CohereAgent:
         self.max_attempt = max_attempt
 
     def generate(self, prompt):
-        systems = [p for p in prompt['messages'] if p['role'] == "system"]
+        systems = [p for p in prompt if p['role'] == "system"]
         if len(systems) == 0:
             system_message = ""
         else:
             system_message = systems[-1]['content']
-        message = prompt['messages'][-1]['content']
+        message = prompt[-1]['content']
         
         if message == "":
             return ""

@@ -9,7 +9,7 @@ mkdir -p $OUTPUT_DIR
 #     --data_dir $DATA_DIR \
 #     --output_dir $OUTPUT_DIR
 
-MODEL=gpt-4o-mini
+MODEL=command-r
 DATA_DIR=output/prompter/aya_opt/suffix_dataset
 MODEL_BASE_NAME=$(basename $MODEL)
 OUTPUT_DIR=output/prompter/aya_opt/$MODEL_BASE_NAME

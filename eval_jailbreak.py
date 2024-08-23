@@ -35,6 +35,13 @@ def _openai_completion_helper(api_key,
     completion = agent.generate(instruct)
     return completion
 
+def _cohere_completion_helper(api_key,
+                              instruct
+                              ):
+    agent = CohereAgent(api_key=api_key)
+    completion = agent.generate(instruct)
+    return completion
+
 @torch.no_grad()
 def eval_suffix_datasets(agent, suffix_dataset_pth_dct, test_prefixes, output_dir, parallel=1):
     for suffix_dataset_key, suffix_dataset_pth in suffix_dataset_pth_dct.items():
@@ -72,12 +79,19 @@ def eval_suffix_dataset(agent, suffix_dataset_key, suffix_dataset_pth, test_pref
     instruct_jb_dict = defaultdict(list)
     if isinstance(agent, VllmAgent):
         completions = agent.generate(full_instructs)
-    else:
+    elif isinstance(agent, GptAgent):
         if parallel > 1:
             with ThreadPoolExecutor(max_workers=parallel) as executor:
                 completions = list(tqdm(executor.map(lambda x: _openai_completion_helper(os.environ["OPENAI_API_KEY"], agent.model_name, x), full_instructs), total=len(full_instructs)))
         # completions = [agent.generate(instruct) for instruct in tqdm(full_instructs, total=len(full_instructs))]
-        
+    elif isinstance(agent, CohereAgent):
+        if parallel > 1:
+            with ThreadPoolExecutor(max_workers=parallel) as executor:
+                completions = list(tqdm(executor.map(lambda x: _cohere_completion_helper(os.environ["COHERE_API_KEY"], x), full_instructs), total=len(full_instructs)))
+    else:
+        raise ValueError(f"Unknown agent type: {type(agent)}")
+    
+        # completions = [agent.generate(instruct) for instruct in tqdm(full_instructs, total=len(full_instructs))]
         # --------- check jb for each trial
     jailbroken_avg, jailbroken_list = check_jailbroken(
         seq=completions, test_prefixes=test_prefixes

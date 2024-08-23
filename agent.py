@@ -78,7 +78,7 @@ class VllmAgent:
         return outputs
     
 class GptAgent:
-    def __init__(self, api_key, model_name):
+    def __init__(self, api_key, model_name="command-r-plus"):
         self.client = OpenAI(
             api_key=api_key,
             max_retries=3,
@@ -86,7 +86,7 @@ class GptAgent:
         self.model_name = model_name
 
     def generate(self, prompt):
-        print('Querying GPT-3.5-turbo...')
+        # print('Querying GPT-3.5-turbo...')
 
         chat_completion = self.client.chat.completions.create(
             messages=prompt,
@@ -101,9 +101,10 @@ class GptAgent:
         return result.strip()
     
 class CohereAgent:
-    def __init__(self, api_key, max_attempt=10):
+    def __init__(self, api_key, model_name, max_attempt=10):
         self.co = cohere.Client(api_key)
         self.max_attempt = max_attempt
+        self.model_name = model_name
 
     def generate(self, prompt):
         systems = [p for p in prompt if p['role'] == "system"]
@@ -121,12 +122,12 @@ class CohereAgent:
             try:
                 if system_message == "":
                     response = self.co.chat(
-                        model="command-r-plus",
+                        model=self.model_name,
                         message=message,
                     )
                 else:
                     response = self.co.chat(
-                        model="command-r-plus",
+                        model=self.model_name,
                         preamble=system_message,
                         message=message,
                     )

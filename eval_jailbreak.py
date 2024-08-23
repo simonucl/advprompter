@@ -21,7 +21,7 @@ import argparse
 
 def check_jailbroken(seq, test_prefixes):
     jailbroken_list = [
-        all([prefix not in text for prefix in test_prefixes]) for text in seq.text
+        all([prefix not in text for prefix in test_prefixes]) for text in seq
     ]
     jailbroken_avg = list_avg(jailbroken_list)
     return jailbroken_avg, jailbroken_list
@@ -121,13 +121,13 @@ if __name__ == "__main__":
     argparser.add_argument('--temperature', type=float, default=0.0)
     argparser.add_argument('--top_p', type=float, default=0.9)
     argparser.add_argument('--top_k', type=int, default=50)
-    argparser.add_argument('--max_new_tokens', type=int, default=4096)
+    argparser.add_argument('--max_new_tokens', type=int, default=512)
     argparser.add_argument('--seed', type=int, default=42)
 
     args = argparser.parse_args()
 
     suffix_dataset_pth_dct = {
-        'train': os.path.join(args.data_dir, 'train.csv'),
+        # 'train': os.path.join(args.data_dir, 'train.csv'),
         'validation': os.path.join(args.data_dir, 'validation.csv'),
         'test': os.path.join(args.data_dir, 'test.csv'),
     }
@@ -137,7 +137,7 @@ if __name__ == "__main__":
     elif "command" in args.model.lower():
         agent = CohereAgent(api_key=os.environ["COHERE_API_KEY"], model_name=args.model)
     else:
-        model_kwargs = dict()
+        model_kwargs = dict(data_parallel_size=1)
         generation_kwargs = {
             "temperature": args.temperature,
             "top_p": args.top_p,

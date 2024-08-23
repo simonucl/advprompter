@@ -48,7 +48,10 @@ def eval_suffix_dataset(agent, suffix_dataset_key, suffix_dataset_pth, test_pref
 
     instructs = df['instruct'].tolist()
     full_instructs = df['full_instruct'].tolist()
-
+    full_instructs = [[{'role': 'user', 'content': instruct}] for instruct in full_instructs]
+    if isinstance(agent, VllmAgent):
+        tokenizer = agent.tokenizer
+        full_instructs = [tokenizer.apply_chat_template(instruct, add_generation_prompt=True, tokenize=False) for instruct in full_instructs]
     # eval_loader = get_dataloader(
     #     suffix_dataset_pth,
     #     shuffle=False,
@@ -121,7 +124,7 @@ if __name__ == "__main__":
     argparser.add_argument('--temperature', type=float, default=0.0)
     argparser.add_argument('--top_p', type=float, default=0.9)
     argparser.add_argument('--top_k', type=int, default=50)
-    argparser.add_argument('--max_new_tokens', type=int, default=512)
+    argparser.add_argument('--max_new_tokens', type=int, default=1024)
     argparser.add_argument('--seed', type=int, default=42)
 
     args = argparser.parse_args()

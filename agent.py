@@ -73,7 +73,7 @@ class VllmAgent:
         prompt_to_output = {
                 g.prompt: [g.outputs[i].text for i in range(len(g.outputs))] for g in outputs
             }
-        outputs = [prompt_to_output[p] if p in prompt_to_output else "" for p in prompt]
+        outputs = [prompt_to_output[p][0] if p in prompt_to_output else "" for p in prompt]
 
         return outputs
     

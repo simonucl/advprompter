@@ -118,6 +118,12 @@ if __name__ == "__main__":
     argparser.add_argument("--data_dir", type=str, required=True)
     argparser.add_argument("--test_prefixes", type=str, default="data/test_prefixes.csv")
     argparser.add_argument("--output_dir", type=str, default="output")
+    argparser.add_argument('--temperature', type=float, default=0.0)
+    argparser.add_argument('--top_p', type=float, default=0.9)
+    argparser.add_argument('--top_k', type=int, default=50)
+    argparser.add_argument('--max_new_tokens', type=int, default=4096)
+    argparser.add_argument('--seed', type=int, default=42)
+
     args = argparser.parse_args()
 
     suffix_dataset_pth_dct = {
@@ -132,7 +138,13 @@ if __name__ == "__main__":
         agent = CohereAgent(api_key=os.environ["COHERE_API_KEY"], model_name=args.model)
     else:
         model_kwargs = dict()
-        generation_kwargs = dict()
+        generation_kwargs = {
+            "temperature": args.temperature,
+            "top_p": args.top_p,
+            "top_k": args.top_k,
+            "max_tokens": args.max_new_tokens,
+            "seed": args.seed,
+    }
         agent = VllmAgent(model_name=args.model, model_kwargs=model_kwargs, generation_kwargs=generation_kwargs)
 
     # Load the test prefixes

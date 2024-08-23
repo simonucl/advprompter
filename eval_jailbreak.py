@@ -61,7 +61,10 @@ def eval_suffix_dataset(agent, suffix_dataset_key, suffix_dataset_pth, test_pref
     # eval_metrics = Metrics(prefix=split + "_eval/")
 
     instruct_jb_dict = defaultdict(list)
-    completions = agent.generate(full_instructs)
+    if isinstance(agent, VllmAgent):
+        completions = agent.generate(full_instructs)
+    else:
+        completions = [agent.generate(instruct) for instruct in full_instructs]
         
         # --------- check jb for each trial
     jailbroken_avg, jailbroken_list = check_jailbroken(

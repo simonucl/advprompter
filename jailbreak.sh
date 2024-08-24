@@ -5,11 +5,9 @@ MODELS=(
     "meta-llama/Meta-Llama-3-8B-Instruct"
 )
 
-MODELS=("CohereForAI/aya-23-35B")
-
 for MODEL in "${MODELS[@]}"
 do
-    DATA_DIR=output/prompter/aya_opt/suffix_dataset
+    DATA_DIR=output/prompter/llama_opt/suffix_dataset
     MODEL_BASE_NAME=$(basename $MODEL)
     OUTPUT_DIR=output/prompter/aya_opt/$MODEL_BASE_NAME
     mkdir -p $OUTPUT_DIR

@@ -6,7 +6,7 @@ MODELS=(
 )
 for MODEL in "${MODELS[@]}"
 do
-    DATA_DIR=output/prompter/aya_opt/suffix_dataset
+    DATA_DIR=output/prompter/llama3_opt/suffix_dataset
     MODEL_BASE_NAME=$(basename $MODEL)
     OUTPUT_DIR=output/prompter/aya_opt/$MODEL_BASE_NAME
     mkdir -p $OUTPUT_DIR

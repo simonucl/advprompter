@@ -1,0 +1,34 @@
+defaults:
+  - base_prompter
+  - _self_
+
+llm_params:
+  model_name: "llama3-8b"
+  checkpoint: 'meta-llama/Meta-Llama-3-8B' # or replace with local DIR
+  lora_params:
+    warmstart: false
+    lora_checkpoint: "exp/local/2024.08.01/1854/checkpoints/step_2496"
+    lora_config:
+      r: 8
+      lora_alpha: 16
+      bias: "none"
+      target_modules:
+        - q_proj
+        - v_proj
+        - lm_head
+  device: 'cuda:0'
+  freeze: true
+  dtype: float32
+prompt_manager:
+  prompt_template: 
+    - key: system_message
+      msg: "<|begin_of_text|>"
+    - key: hyper_instruct
+      msg: "{instruct}"  # loaded from context
+    - key: suffix
+      msg: "{suffix}"  # loaded from context
+allow_non_ascii: false
+gen_params:
+  do_sample: true
+  temperature: 1.0
+  top_p: 0.9

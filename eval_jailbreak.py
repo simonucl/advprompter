@@ -64,6 +64,8 @@ def eval_suffix_dataset(agent, suffix_dataset_key, suffix_dataset_pth, test_pref
     df = pd.read_csv(suffix_dataset_pth)
 
     instructs = df['instruct'].tolist()
+    if 'full_instruct' not in df.columns:
+        df['full_instruct'] = df['instruct']
     full_instructs = df['full_instruct'].tolist()
     full_instructs = [[{'role': 'user', 'content': instruct}] for instruct in full_instructs]
     if isinstance(agent, VllmAgent):

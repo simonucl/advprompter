@@ -171,7 +171,7 @@ if __name__ == "__main__":
     elif "command" in args.model.lower():
         agent = CohereAgent(api_key=os.environ["COHERE_API_KEY"], model_name=args.model)
     else:
-        model_kwargs = dict(data_parallel_size=1)
+        model_kwargs = dict(tensor_parallel_size=2,max_model_len=2048)
         generation_kwargs = {
             "temperature": args.temperature,
             "top_p": args.top_p,

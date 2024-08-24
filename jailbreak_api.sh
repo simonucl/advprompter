@@ -14,5 +14,6 @@ do
     python3 eval_jailbreak.py \
         --model $MODEL \
         --data_dir $DATA_DIR \
-        --output_dir $OUTPUT_DIR
+        --output_dir $OUTPUT_DIR \
+        --parallel 16
 done

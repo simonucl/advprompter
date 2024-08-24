@@ -4,11 +4,12 @@ MODELS=(
     "command-r"
     "command-r-plus"
 )
+BASE_DIR=output/prompter/llama3_opt
 for MODEL in "${MODELS[@]}"
 do
-    DATA_DIR=output/prompter/llama3_opt/suffix_dataset
+    DATA_DIR=$BASE_DIR/suffix_dataset
     MODEL_BASE_NAME=$(basename $MODEL)
-    OUTPUT_DIR=output/prompter/aya_opt/$MODEL_BASE_NAME
+    OUTPUT_DIR=$DATA_DIR/$MODEL_BASE_NAME
     mkdir -p $OUTPUT_DIR
 
     python3 eval_jailbreak.py \

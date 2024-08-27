@@ -1,11 +1,15 @@
 MODELS=(
-    "CohereForAI/aya-23-8B"
-    "CohereForAI/aya-23-35B"
-    "google/gemma-2-9b-it"
-    "meta-llama/Meta-Llama-3-8B-Instruct"
+    # "CohereForAI/aya-23-8B"
+    # "CohereForAI/aya-23-35B"
+    # "google/gemma-2-9b-it"
+    # "meta-llama/Meta-Llama-3-8B-Instruct"
+    "simonycl/aya-advprompter"
+    "simonycl/aya-advprompter-checkpoint-50"
+    "simonycl/aya-advprompter-checkpoint-100"
+    "simonycl/aya-advprompter-checkpoint-150"
 )
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
-BASE_DIR=output/prompter/llama3_opt
+BASE_DIR=output/prompter/aya_opt
 
 for MODEL in "${MODELS[@]}"
 do

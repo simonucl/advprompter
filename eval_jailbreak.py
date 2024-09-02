@@ -117,11 +117,11 @@ def eval_suffix_dataset(agent, suffix_dataset_key, suffix_dataset_pth, test_pref
         jailbroken_dict[method] = [result[method] for result in results]
 
     for method in evaluate_methods:
-        df[f'jailbroken_{method}'] = jailbroken_dict[method]['jailbroken']
-        df[f'jailbroken_score_{method}'] = jailbroken_dict[method]['score']
+        df[f'jailbroken_{method}'] = [result['jailbroken'] for result in jailbroken_dict[method]]
+        df[f'jailbroken_score_{method}'] = [result['score'] for result in jailbroken_dict[method]]
         instruct_jb_dict = defaultdict(list)
-        for instruct, jb in zip(instructs, jailbroken_dict[method]['jailbroken']):
-            instruct_jb_dict[instruct].append(jb)
+        for instruct, jb in zip(instructs, jailbroken_dict[method]):
+            instruct_jb_dict[instruct].append(jb['jailbroken'])
 
         jb_all = [jb_list for (instruct, jb_list) in instruct_jb_dict.items()]
         max_length = max(len(sublist) for sublist in jb_all)

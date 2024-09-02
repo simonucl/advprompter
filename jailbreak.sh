@@ -1,5 +1,5 @@
 MODELS=(
-    "CohereForAI/aya-23-8B"
+    # "CohereForAI/aya-23-8B"
     "CohereForAI/aya-23-35B"
     "command-r-08-2024"
     "command-r"
@@ -25,5 +25,6 @@ do
     python3 eval_jailbreak.py \
         --model $MODEL \
         --data_dir $DATA_DIR \
-        --output_dir $OUTPUT_DIR
+        --output_dir $OUTPUT_DIR \
+        --parallel 16
 done

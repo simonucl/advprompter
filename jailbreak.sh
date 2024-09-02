@@ -1,10 +1,10 @@
 MODELS=(
     # "CohereForAI/aya-23-8B"
     # "CohereForAI/aya-23-35B"
-    # "command-r-08-2024"
+    "command-r-08-2024"
     # "command-r"
     # "command-r-plus"
-    # "command-r-plus-08-2024"
+    "command-r-plus-08-2024"
     "command-r-plus-08-2024-safe"
     "command-r-08-2024-safe"
     # "google/gemma-2-9b-it"
